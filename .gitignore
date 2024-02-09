@@ -1,0 +1,16 @@
+node_modules/
+package-lock.json
+yarn.lock
+.DS_Store
+.env
+.npmrc
+.yarnrc
+.idea/
+.vscode/
+.coverage/
+dist/
+server/dist/
+build/
+README-user.md
+jest.config.js
+karma.conf.js
