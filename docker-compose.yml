@@ -1,0 +1,83 @@
+version: '3'
+services:
+  node-server:
+    build: ./smithword
+    ports:
+#      - "5000:5000"
+      - "3000:3000"
+      - "3001:3001"
+    depends_on:
+      - datadog-agent
+
+    environment:
+      - DD_SERVICE=node-server
+      - DD_VERSION=0.0.0.1
+      - DD_ENV="test"
+      - DD_LOGS_INJECTION=true
+#      - DD_PROFILING_ENABLED=true
+      - DD_APPSEC_ENABLED=true
+# Single Step instrumentation
+#      - DD_INSTRUMENT_SERVICE_WITH_APM=true
+      - DD_TRACE_DEBUG=false 
+      - DD_AGENT_HOST=datadog-agent
+      - DD_DYNAMIC_INSTRUMENTATION_ENABLED=true
+
+  compound-words-api:
+    build: ./compoundWordApi
+    ports:
+      - "5000:5000"
+    depends_on:
+      - datadog-agent
+    labels:
+      com.datadoghq.ad.logs: '[{"source": "python"}]'
+    environment:
+      - DD_SERVICE=compound-words-api
+      - DD_VERSION=0.0.0.1
+      - DD_ENV="test"
+      - DD_LOGS_INJECTION=true
+      - DD_AGENT_HOST=datadog-agent
+
+#      - DD_PROFILING_ENABLED=true
+      - DD_APPSEC_ENABLED=true
+# Single Step instrumentation
+#      - DD_INSTRUMENT_SERVICE_WITH_APM=true
+      
+      - DD_TRACE_DEBUG=false 
+      - DD_DYNAMIC_INSTRUMENTATION_ENABLED=true
+
+      #Inferred Services
+      - DD_TRACE_PEER_SERVICE_DEFAULTS_ENABLED=true
+      - DD_TRACE_REMOVE_INTEGRATION_SERVICE_NAMES_ENABLED=true
+
+  datadog-agent:
+    image: datadog/agent:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro \
+      - /proc/:/host/proc/:ro
+# Single Step instrumentation      
+#      - /opt/datadog/apm:/opt/datadog/apm \
+
+    ports:
+      - "8126:8126/tcp"
+      
+    environment:
+      - DD_SITE=datadoghq.com
+      - DD_API_KEY=${DDOG_API_KEY}
+      - DD_APM_NON_LOCAL_TRAFFIC=true      
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      # Inferred Services ENV Vars
+      - DD_APM_COMPUTE_STATS_BY_SPAN_KIND=true
+      - DD_APM_PEER_SERVICE_AGGREGATION=true
+
+#      - DD_APM_ENABLED=true
+#      - DD_REMOTE_CONFIGURATION_ENABLED=true
+# Single step instrumentation
+#      - DD_APM_INSTRUMENTATION_ENABLED=docker
+#      - DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
+#      - DD_DOGSTATSD_SOCKET=/opt/datadog/apm/inject/run/dsd.socket
+
+    
