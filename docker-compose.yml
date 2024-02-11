@@ -3,7 +3,6 @@ services:
   node-server:
     build: ./smithword
     ports:
-#      - "5000:5000"
       - "3000:3000"
       - "3001:3001"
     depends_on:
@@ -66,6 +65,7 @@ services:
       - DD_API_KEY=${DDOG_API_KEY}
       - DD_APM_NON_LOCAL_TRAFFIC=true      
       - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+      - DD_REMOTE_CONFIGURATION_ENABLED=true
 
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
@@ -74,7 +74,7 @@ services:
       - DD_APM_PEER_SERVICE_AGGREGATION=true
 
 #      - DD_APM_ENABLED=true
-#      - DD_REMOTE_CONFIGURATION_ENABLED=true
+       
 # Single step instrumentation
 #      - DD_APM_INSTRUMENTATION_ENABLED=docker
 #      - DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
