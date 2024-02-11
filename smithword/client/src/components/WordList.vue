@@ -28,12 +28,9 @@
   
       async function fetchOrderedList() {
         try {
-          console.log('word.value : ' + word.value)
           const response = await fetch('http://localhost:5000/generate?length=' + count.value + '&startingWord=' + (word.value));
 
           const statusCode =  response.status;
-          console.log('Response Code : ' + statusCode)
-          //console.log('Response json : ' + await response.json())
           orderedList.value = await response.json();
           console.log('OrderedList : ' + orderedList.value)
         }
